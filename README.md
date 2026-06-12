@@ -1,17 +1,13 @@
-# Local 806 Job Steward Weekly Report
+# Local 806 Steward Report App
 
-Static GitHub Pages app for Local 806 steward weekly reports.
+Static GitHub Pages app for the Local 806 Job Steward Weekly Report.
 
-## Features
-- Union-style 3-page weekly report layout
+Features:
+- 3 union-style pages
 - Sunday first
-- Prefilled job info and workers
-- Wilson/Helen crossed-out repeat rows on pages 2 and 3
-- Editable workers with Add/Edit/Delete controls
-- Week ending date picker inside the form
-- Per-worker totals and per-page totals
-- Employer Rep and Job Steward signature pads
-- Save to device, print/save PDF, backup/import
-
-## Hosting
-This can be hosted for free on GitHub Pages. No Render backend is needed unless online saved report history or logins are added later.
+- per-worker totals and per-page totals
+- tap/click day boxes to enter hours or mark X
+- editable workers and Ins. numbers
+- mobile-friendly signature boxes
+- Print / Save PDF
+- local Save plus Backup export/import

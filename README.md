@@ -6,7 +6,8 @@ Features:
 - 3 union-style pages
 - Sunday first
 - per-worker totals and per-page totals
-- tap/click day boxes to enter hours or mark X
+- direct tap-to-type hour boxes
+- press-and-hold on phone or double-click on PC to mark X
 - editable workers and Ins. numbers
 - mobile-friendly signature boxes
 - Print / Save PDF

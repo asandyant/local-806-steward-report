@@ -35,8 +35,8 @@
   .ins-input{text-align:center;font-size:12px;height:100%}
   .edit-btn{border:0;background:#e0f2fe;color:#075985;border-radius:4px;padding:2px 4px;font-size:9px;font-weight:800;cursor:pointer}
   .edit-btn.blank{visibility:hidden}
-  .hour-btn{width:100%;height:100%;border:0;background:transparent;font-size:12px;font-family:Arial,Helvetica,sans-serif;cursor:pointer;text-align:center;padding:0;color:#000}
-  .hour-btn.mark-x{font-weight:900;letter-spacing:.4px}
+  .hour-input{width:100%;height:100%;border:0;background:transparent;font-size:12px;font-family:Arial,Helvetica,sans-serif;text-align:center;padding:0;color:#000;outline:0;border-radius:0}
+  .hour-input.mark-x{font-weight:900;letter-spacing:.4px}
   .total-cell{background:#f8fafc;text-align:center;font-size:12px;font-weight:800}
   .xcell{position:relative;height:100%;background:#fff}
   .xcell:before,.xcell:after{content:"";position:absolute;left:4px;right:4px;top:50%;border-top:1.3px solid #555;transform-origin:center}
@@ -97,7 +97,7 @@
     .union-title{font-size:20px}
     .name-grid{grid-template-columns:1fr}
     .sig-box{border:0}
-    .hour-btn{cursor:default}
+    .hour-input{cursor:default;-webkit-appearance:none;appearance:none}
     @page{size:letter portrait;margin:0}
   }
 </style>
@@ -116,7 +116,6 @@
 
 <div id="sigModal" class="modal" aria-hidden="true"><div class="modal-card"><h2 id="sigTitle">Sign</h2><div class="canvas-wrap"><canvas id="sigCanvas" class="sig-canvas"></canvas></div><div class="modal-actions"><button class="save" onclick="saveSignature()">Save Signature</button><button class="clear" onclick="clearCanvas()">Clear</button><button class="delete" onclick="deleteSignature()">Delete Saved Signature</button><button class="cancel" onclick="closeSignature()">Cancel</button></div></div></div>
 <div id="workerModal" class="modal" aria-hidden="true"><div class="modal-card"><h2>Edit Worker</h2><input type="hidden" id="editPi"><input type="hidden" id="editWi"><label>Name<input id="editName" type="text"></label><label>Ins. No.<input id="editIns" type="text"></label><label>Role / note, optional<input id="editRole" type="text" placeholder="FOREMAN or SHOP STEWARD"></label><div class="modal-actions"><button class="save" onclick="saveWorkerEdit()">Save Worker</button><button class="delete" onclick="deleteWorkerEdit()">Delete Worker From This Page</button><button class="cancel" onclick="closeWorkerEdit()">Cancel</button></div></div></div>
-<div id="hourModal" class="modal" aria-hidden="true"><div class="modal-card"><h2>Edit Day Box</h2><p id="hourModalInfo"></p><input type="hidden" id="hourPi"><input type="hidden" id="hourWi"><input type="hidden" id="hourDay"><label>Hours or X<input id="hourValue" type="text" inputmode="decimal" placeholder="Example: 8, 8.5, X"></label><div class="modal-actions"><button class="save" onclick="saveHourEdit()">Save</button><button class="xmark" onclick="markHourX()">Mark X</button><button class="clear" onclick="clearHourEdit()">Clear</button><button class="cancel" onclick="closeHourEdit()">Cancel</button></div></div></div>
 <script>
 const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const logoSrc='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFwAAABcCAAAAADGhI2EAAAEGElEQVR4nK1Z25bsKgiksub/f7nOQ0S5qul9fOjpjlBWAAEdUG4HRETkXl4EN8KoHl4oHsFL4Ev8PfgO+QJ/B56gWa22A2jnGhzkRVqIvyM0zS8ICzB08DU4Nr/MqlgSJfxzxrZ4jGI039OomEOZFTqYeIFr5bzMHOZl38/FF3Ex44I0V4BbEZWvzWResBGL4FagjoHhR86PZfqIHsAtG4iQ9H6r1jJ/AroHH4mPQ5aYD9Y0MP4a4g26A59JFStUKCKIzlJBfby+OcEnqQhk7oralO6hpoMKHZWzKXjJUAy5DKyUfa4xiMwaBr1AzuIrfuCFYyjSeX88qmJlPTSxaT1swafBhytVt0T2MwMbac+B4cF4u/yO1Yha5pdjbhUow/097UCegiJzwUbbontoI2KMpfrHxNy4xES5RxUBAIZAQu2ixy2PIYV9PilILmgTMaZYgGPjbG2CVEMIMYGemGsI6b6sqvCRO50pEZi/tHjREqZ6BN3UPiIfLwscw68q9RyvbfInHHNqmj4YBYm4BzDjWVOz0jrsXJNnLfHUV6mZs39mGzAGwjuTtl7DfVYQEiICmk3EaTiXEisYKXyqEHZOwYuu49VJPdZuYATNGH9mQshkccnkGxorieq24RMC8d+GD/PYK2ZT5m7x5Vj1hoemaCzvxOF+FULdk7qF3o5Nu/EV3FJHmjnofmc+xk3W3IHD2wAu0G7Gs5ddwS/4bpcN89V1jF7wQ/04govIaKdf0vRUyxOvH905VHOf3b8e/sL2O+auXeDa2nSzv4DDdgGcHZV7mxP5pyMQCjUp0HR93Rz0zO2B7YUvitQevHUo/YdicUbO2aEsmPda5uzJ1Qr345fcsqqtjfVina/gK1ou2qev4BrjvMstxYFgqzEKMTkb11bpB5u/Z2oBJSaIKLe9Kapq8JshqeTdtUAcP9ZQaE+OXTg+p+NxswKmmGbkgkTDfIe+TidESAphfDNLOCGOjNmWjXx+SjiFUpjt9HdZcQt/I/roKl/Qz7xfkYZ5Z6xvJJ6CyrkfZPBsSmH57G+mNPEdh7b8tWWL7Xu4gIrQq0RFrbI/d83KGftNwXUi8oK2Pdmf1DFZC00rYjTi7Zxvffr0GITcdd6Ubi+KqYdSERG4O1H3S2/c1vomkmK6EL2H1BfdNieL8XrREjxGzMp+Te6AyiFM6Ih3XIbRAO2Iw/bvJYi3uXsLeuzZ6nphfy0bXO8darxiLImoFNFNx+cknkqhHWF3UZWakE0XxUMV0PDdLaVdRkMtbf+U31g9VXT7Jwvl3HJ7Zku9YlasEpfdV5TGnRutOcrmf23K9eXQUpbL1yeL5Eib8OoGqBrtP1vrMCmxW6N9+jdxt94v4Dfwe/VTIBy6xr3uRZT1Xc//AB5XuFWR/wDgm7K2PCSRHQAAAABJRU5ErkJggg==';
@@ -180,7 +179,7 @@ const defaultData={
 const storageKeys=['local806StewardReportV6','local806StewardReportV5','local806StewardReportV4','local806StewardReportV3'];
 let data=loadData();
 let activeSig=null; const sigModal=document.getElementById('sigModal'); const canvas=document.getElementById('sigCanvas'); const ctx=canvas.getContext('2d'); let drawing=false,last=null;
-const workerModal=document.getElementById('workerModal'); const hourModal=document.getElementById('hourModal');
+const workerModal=document.getElementById('workerModal'); let holdTimer=null;
 
 function deepCopy(obj){return JSON.parse(JSON.stringify(obj))}
 function loadData(){
@@ -203,7 +202,7 @@ function setPageWorker(pi,wi,key,val){if(!data.pages[pi]||!data.pages[pi].worker
 function renderFootTotalsOnly(){
   document.querySelectorAll('[data-page-total]').forEach(el=>{const pi=+el.dataset.pageTotal; el.textContent=fmt(pageTotal(data.pages[pi]));});
   document.querySelectorAll('[data-worker-total]').forEach(el=>{const [pi,wi]=el.dataset.workerTotal.split('-').map(Number); const w=data.pages[pi]?.workers[wi]; el.textContent=w&& !w.crossed ? displayWorkerTotal(w) : '';});
-  document.querySelectorAll('[data-hour-display]').forEach(el=>{const [pi,wi,day]=el.dataset.hourDisplay.split('|'); const val=data.pages[+pi]?.workers[+wi]?.[day]||''; el.textContent=val; el.classList.toggle('mark-x', String(val).trim().toUpperCase()==='X');});
+  document.querySelectorAll('[data-hour-display]').forEach(el=>{const [pi,wi,day]=el.dataset.hourDisplay.split('|'); const val=data.pages[+pi]?.workers[+wi]?.[day]||''; if(el.value!==val) el.value=val; el.classList.toggle('mark-x', String(val).trim().toUpperCase()==='X');});
 }
 function sigHtml(pi,type){const src=data.pages[pi].signatures?.[type]||''; return '<div class="sig-wrap"><div class="sig-box" onclick="openSignature('+pi+',\''+type+'\')">'+(src?'<img src="'+src+'" alt="signature">':'<span class="sig-placeholder">Tap/click to sign</span>')+'</div><div class="sig-caption">'+(type==='employerRep'?'Employer Rep.':'Job Steward')+'</div></div>';}
 function render(){
@@ -234,7 +233,7 @@ function render(){
         days.map(d=>{
           if(w.crossed) return '<td><div class="xcell"></div></td>';
           const value=esc(w[d]||'');
-          return '<td><button type="button" class="hour-btn '+((String(w[d]||'').trim().toUpperCase()==='X')?'mark-x':'')+'" data-hour-display="'+pi+'|'+wi+'|'+d+'" onclick="openHourEdit('+pi+','+wi+',\''+d+'\')" '+(real?'':'disabled')+'>'+value+'</button></td>';
+          return '<td><input class="hour-input '+((String(w[d]||'').trim().toUpperCase()==='X')?'mark-x':'')+'" data-hour-display="'+pi+'|'+wi+'|'+d+'" value="'+value+'" inputmode="decimal" oninput="setHourValue('+pi+','+wi+',\''+d+'\',this.value)" onpointerdown="startXHold(event,'+pi+','+wi+',\''+d+'\')" onpointerup="cancelXHold()" onpointercancel="cancelXHold()" onpointerleave="cancelXHold()" ondblclick="toggleX('+pi+','+wi+',\''+d+'\')" title="Tap to type hours. Press and hold or double-click to mark X." '+(real?'':'disabled')+'></td>';
         }).join('')+
         '<td class="total-cell" data-worker-total="'+pi+'-'+wi+'">'+(w.crossed?'':displayWorkerTotal(w))+'</td>';
       tbody.appendChild(tr);
@@ -247,12 +246,10 @@ function openWorkerEdit(pi,wi){const w=data.pages[pi].workers[wi]; document.getE
 function closeWorkerEdit(){workerModal.classList.remove('show'); workerModal.setAttribute('aria-hidden','true');}
 function saveWorkerEdit(){const pi=+document.getElementById('editPi').value, wi=+document.getElementById('editWi').value; const w=data.pages[pi].workers[wi]; w.name=document.getElementById('editName').value; w.ins=document.getElementById('editIns').value; w.role=document.getElementById('editRole').value; saveRaw(); closeWorkerEdit(); render();}
 function deleteWorkerEdit(){const pi=+document.getElementById('editPi').value, wi=+document.getElementById('editWi').value; const w=data.pages[pi].workers[wi]; if(w.crossed){alert('This crossed-out Wilson/Helen row stays because the union wants it shown on this page. You can edit the name or Ins. No., but it will stay crossed out.'); return;} if(confirm('Delete this worker from this page? The workers below will move up and blank lines will stay at the bottom.')){data.pages[pi].workers.splice(wi,1); saveRaw(); closeWorkerEdit(); render();}}
-function openHourEdit(pi,wi,day){const w=data.pages[pi].workers[wi]; document.getElementById('hourPi').value=pi; document.getElementById('hourWi').value=wi; document.getElementById('hourDay').value=day; document.getElementById('hourModalInfo').textContent=(w.name||'Worker')+' - '+day; document.getElementById('hourValue').value=w[day]||''; hourModal.classList.add('show'); hourModal.setAttribute('aria-hidden','false'); setTimeout(()=>document.getElementById('hourValue').focus(),50);}
-function closeHourEdit(){hourModal.classList.remove('show'); hourModal.setAttribute('aria-hidden','true');}
-function saveHourValue(val){const pi=+document.getElementById('hourPi').value, wi=+document.getElementById('hourWi').value, day=document.getElementById('hourDay').value; let value=(val!==undefined?val:document.getElementById('hourValue').value).trim(); if(value.toUpperCase()==='X') value='X'; setPageWorker(pi,wi,day,value); closeHourEdit();}
-function saveHourEdit(){saveHourValue();}
-function markHourX(){saveHourValue('X');}
-function clearHourEdit(){saveHourValue('');}
+function setHourValue(pi,wi,day,val){let value=String(val??'').trim(); if(value.toUpperCase()==='X') value='X'; setPageWorker(pi,wi,day,value);}
+function startXHold(e,pi,wi,day){cancelXHold(); holdTimer=setTimeout(()=>{setHourValue(pi,wi,day,'X'); if(e.target){e.target.value='X'; e.target.classList.add('mark-x'); e.target.blur();}},650);}
+function cancelXHold(){if(holdTimer){clearTimeout(holdTimer); holdTimer=null;}}
+function toggleX(pi,wi,day){const w=data.pages[pi].workers[wi]; const cur=String(w[day]||'').trim().toUpperCase(); setHourValue(pi,wi,day,cur==='X'?'':'X'); renderFootTotalsOnly();}
 function downloadBackup(){saveRaw(); const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='local-806-steward-report-backup.json'; a.click(); URL.revokeObjectURL(a.href);}
 function importBackup(e){const file=e.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=()=>{try{data=JSON.parse(r.result); saveRaw(); render(); alert('Backup imported.');}catch(err){alert('Could not import this backup.')}}; r.readAsText(file); e.target.value='';}
 function resizeCanvas(){const ratio=window.devicePixelRatio||1; const rect=canvas.getBoundingClientRect(); canvas.width=rect.width*ratio; canvas.height=rect.height*ratio; ctx.setTransform(ratio,0,0,ratio,0,0); ctx.lineWidth=3; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle='#111'; ctx.fillStyle='#fff'; ctx.fillRect(0,0,rect.width,rect.height)}

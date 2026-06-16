@@ -8,6 +8,7 @@ Features:
 - per-worker totals and per-page totals
 - direct tap-to-type hour boxes
 - press-and-hold on phone or double-click on PC to mark X
+- Clear Week button that keeps edited worker names/Ins. numbers
 - editable workers and Ins. numbers
 - mobile-friendly signature boxes
 - Print / Save PDF

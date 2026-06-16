@@ -106,6 +106,7 @@
 <div class="toolbar">
   <div class="toolbar-inner">
     <button class="primary" onclick="saveData(true)">Save</button>
+    <button onclick="clearWeekData()">Clear Week</button>
     <button onclick="window.print()">Print / Save PDF</button>
     <button onclick="downloadBackup()">Download Backup</button>
     <button onclick="document.getElementById('importFile').click()">Import Backup</button>
@@ -250,6 +251,18 @@ function setHourValue(pi,wi,day,val){let value=String(val??'').trim(); if(value.
 function startXHold(e,pi,wi,day){cancelXHold(); holdTimer=setTimeout(()=>{setHourValue(pi,wi,day,'X'); if(e.target){e.target.value='X'; e.target.classList.add('mark-x'); e.target.blur();}},650);}
 function cancelXHold(){if(holdTimer){clearTimeout(holdTimer); holdTimer=null;}}
 function toggleX(pi,wi,day){const w=data.pages[pi].workers[wi]; const cur=String(w[day]||'').trim().toUpperCase(); setHourValue(pi,wi,day,cur==='X'?'':'X'); renderFootTotalsOnly();}
+function clearWeekData(){
+  if(!confirm('Clear this week? This removes hours, X marks, signatures, and week ending date, but keeps the current worker names and Ins. numbers exactly as edited.')) return;
+  data.weekEnding='';
+  data.pages.forEach(p=>{
+    p.signatures={employerRep:'',jobSteward:''};
+    p.workers.forEach(w=>{
+      days.forEach(d=>{ delete w[d]; });
+    });
+  });
+  saveRaw();
+  render();
+}
 function downloadBackup(){saveRaw(); const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='local-806-steward-report-backup.json'; a.click(); URL.revokeObjectURL(a.href);}
 function importBackup(e){const file=e.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=()=>{try{data=JSON.parse(r.result); saveRaw(); render(); alert('Backup imported.');}catch(err){alert('Could not import this backup.')}}; r.readAsText(file); e.target.value='';}
 function resizeCanvas(){const ratio=window.devicePixelRatio||1; const rect=canvas.getBoundingClientRect(); canvas.width=rect.width*ratio; canvas.height=rect.height*ratio; ctx.setTransform(ratio,0,0,ratio,0,0); ctx.lineWidth=3; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle='#111'; ctx.fillStyle='#fff'; ctx.fillRect(0,0,rect.width,rect.height)}

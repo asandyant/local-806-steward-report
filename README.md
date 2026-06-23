@@ -12,5 +12,5 @@ Features:
 - editable workers and Ins. numbers
 - mobile-friendly signature boxes
 - Download Clean PDF button that creates the PDF inside the app without browser URL/date footers
-- Print / Save PDF fallback
+- Print Backup with tighter 3-page print CSS
 - local Save plus Backup export/import

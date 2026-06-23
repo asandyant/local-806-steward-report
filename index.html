@@ -99,13 +99,13 @@
     body{background:#fff}
     .toolbar,.sheet-actions,.edit-btn,.modal,.sig-placeholder{display:none!important}
     .wrap{padding:0}
-    .sheet{box-shadow:none;border:0;margin:0;padding:.50in .36in .23in;width:8.5in;min-height:10.95in;overflow:visible}
+    .sheet{box-shadow:none;border:0;margin:0;padding:.22in .25in .10in;width:8.5in;height:11in;min-height:0;overflow:hidden;page-break-after:always;break-after:page}
     .sheet-inner{min-width:0}
     .union-title{font-size:20px}
     .name-grid{grid-template-columns:1fr}
     .sig-box{border:0}
     .hour-input{cursor:default;-webkit-appearance:none;appearance:none}
-    @page{size:letter portrait;margin:0}
+    .union-title{height:.42in;font-size:18px}.report-title{height:.30in}.data-row td{height:.265in}.foot-line{min-height:.25in}.sig-line{min-height:.42in}.sig-box{height:.28in}.fineprint{font-size:5.3px;line-height:1.05;padding:2px 0 1px}.footer-logo img{height:.22in}@page{size:letter portrait;margin:0}
   }
 </style>
 </head>
@@ -114,8 +114,8 @@
   <div class="toolbar-inner">
     <button class="primary" onclick="saveData(true)">Save</button>
     <button onclick="clearWeekData()">Clear Week</button>
-    <button onclick="window.print()">Print / Save PDF</button>
     <button onclick="downloadCleanPdf()">Download Clean PDF</button>
+    <button onclick="window.print()">Print Backup</button>
     <button onclick="downloadBackup()">Download Backup</button>
     <button onclick="document.getElementById('importFile').click()">Import Backup</button>
     <input id="importFile" type="file" accept="application/json" hidden onchange="importBackup(event)">
@@ -270,7 +270,7 @@ async function downloadCleanPdf(){
     await new Promise(r=>setTimeout(r,250));
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({orientation:'portrait',unit:'pt',format:'letter',compress:true});
-    const sheets=[...document.querySelectorAll('.sheet')];
+    const sheets=[...document.querySelectorAll('.sheet-inner')];
     for(let i=0;i<sheets.length;i++){
       if(i>0) pdf.addPage('letter','portrait');
       const canvas=await html2canvas(sheets[i],{
@@ -281,7 +281,12 @@ async function downloadCleanPdf(){
         windowWidth:900
       });
       const img=canvas.toDataURL('image/jpeg',0.95);
-      pdf.addImage(img,'JPEG',0,0,612,792);
+      const marginX=24, marginY=34;
+      const maxW=612-(marginX*2), maxH=792-(marginY*2);
+      const ratio=Math.min(maxW/canvas.width, maxH/canvas.height);
+      const w=canvas.width*ratio, h=canvas.height*ratio;
+      const x=(612-w)/2, y=(792-h)/2;
+      pdf.addImage(img,'JPEG',x,y,w,h);
     }
     const date=(data.weekEnding||new Date().toISOString().slice(0,10)).replaceAll('-','.');
     pdf.save('Local-806-Steward-Report-'+date+'.pdf');

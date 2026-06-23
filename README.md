@@ -11,5 +11,6 @@ Features:
 - Clear Week button that keeps edited worker names/Ins. numbers
 - editable workers and Ins. numbers
 - mobile-friendly signature boxes
-- Print / Save PDF
+- Download Clean PDF button that creates the PDF inside the app without browser URL/date footers
+- Print / Save PDF fallback
 - local Save plus Backup export/import

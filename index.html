@@ -112,13 +112,8 @@
 <body>
 <div class="toolbar">
   <div class="toolbar-inner">
-    <button class="primary" onclick="saveData(true)">Save</button>
+    <button class="primary" onclick="printCleanReport()">Print</button>
     <button onclick="clearWeekData()">Clear Week</button>
-    <button onclick="downloadCleanPdf()">Download Clean PDF</button>
-    <button onclick="window.print()">Print Backup</button>
-    <button onclick="downloadBackup()">Download Backup</button>
-    <button onclick="document.getElementById('importFile').click()">Import Backup</button>
-    <input id="importFile" type="file" accept="application/json" hidden onchange="importBackup(event)">
   </div>
 </div>
 <main id="app" class="wrap"></main>
@@ -205,7 +200,7 @@ function hasNumericHours(w){return days.some(d=>{const raw=w[d]; return raw!==''
 function workerTotal(w){return w.crossed?0:days.reduce((t,d)=>t+num(w[d]),0)}
 function displayWorkerTotal(w){return hasNumericHours(w)?fmt(workerTotal(w)):''}
 function pageTotal(p){return p.workers.reduce((t,w)=>t+workerTotal(w),0)}
-function saveData(show){saveRaw(); if(show) alert('Saved on this phone/computer.');}
+function saveData(show){saveRaw();}
 function setTop(key,val){data[key]=val; saveRaw(); renderFootTotalsOnly();}
 function setPageWorker(pi,wi,key,val){if(!data.pages[pi]||!data.pages[pi].workers[wi]) return; data.pages[pi].workers[wi][key]=val; saveRaw(); renderFootTotalsOnly();}
 function renderFootTotalsOnly(){
@@ -251,52 +246,6 @@ function render(){
   });
 }
 function addWorker(pi){data.pages[pi].workers.push(blankWorker()); saveRaw(); 
-function loadScriptOnce(src){
-  return new Promise((resolve,reject)=>{
-    if(document.querySelector('script[src="'+src+'"]')) return resolve();
-    const s=document.createElement('script');
-    s.src=src;
-    s.onload=resolve;
-    s.onerror=()=>reject(new Error('Could not load '+src));
-    document.head.appendChild(s);
-  });
-}
-async function downloadCleanPdf(){
-  saveRaw();
-  try{
-    await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
-    await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
-    document.body.classList.add('pdf-capture');
-    await new Promise(r=>setTimeout(r,250));
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({orientation:'portrait',unit:'pt',format:'letter',compress:true});
-    const sheets=[...document.querySelectorAll('.sheet-inner')];
-    for(let i=0;i<sheets.length;i++){
-      if(i>0) pdf.addPage('letter','portrait');
-      const canvas=await html2canvas(sheets[i],{
-        scale:2,
-        backgroundColor:'#ffffff',
-        useCORS:true,
-        logging:false,
-        windowWidth:900
-      });
-      const img=canvas.toDataURL('image/jpeg',0.95);
-      const marginX=24, marginY=34;
-      const maxW=612-(marginX*2), maxH=792-(marginY*2);
-      const ratio=Math.min(maxW/canvas.width, maxH/canvas.height);
-      const w=canvas.width*ratio, h=canvas.height*ratio;
-      const x=(612-w)/2, y=(792-h)/2;
-      pdf.addImage(img,'JPEG',x,y,w,h);
-    }
-    const date=(data.weekEnding||new Date().toISOString().slice(0,10)).replaceAll('-','.');
-    pdf.save('Local-806-Steward-Report-'+date+'.pdf');
-  }catch(err){
-    alert('Clean PDF could not be generated on this device. Try Chrome/Edge on a PC, or use Print / Save PDF with headers and footers turned off. Error: '+err.message);
-  }finally{
-    document.body.classList.remove('pdf-capture');
-  }
-}
-
 render(); setTimeout(()=>{const inputs=document.querySelectorAll('.sheet')[pi].querySelectorAll('.name-input'); inputs[inputs.length-1]?.focus();},50)}
 function openWorkerEdit(pi,wi){const w=data.pages[pi].workers[wi]; document.getElementById('editPi').value=pi; document.getElementById('editWi').value=wi; document.getElementById('editName').value=w.name||''; document.getElementById('editIns').value=w.ins||''; document.getElementById('editRole').value=w.role||''; workerModal.classList.add('show'); workerModal.setAttribute('aria-hidden','false');}
 function closeWorkerEdit(){workerModal.classList.remove('show'); workerModal.setAttribute('aria-hidden','true');}
@@ -331,6 +280,201 @@ function closeSignature(){sigModal.classList.remove('show'); sigModal.setAttribu
 function saveSignature(){if(!activeSig) return; data.pages[activeSig.pi].signatures=data.pages[activeSig.pi].signatures||{}; data.pages[activeSig.pi].signatures[activeSig.type]=canvas.toDataURL('image/png'); saveRaw(); closeSignature(); render();}
 function deleteSignature(){if(!activeSig) return; if(confirm('Delete this saved signature?')){data.pages[activeSig.pi].signatures[activeSig.type]=''; saveRaw(); closeSignature(); render();}}
 canvas.addEventListener('mousedown',startDraw); canvas.addEventListener('mousemove',moveDraw); window.addEventListener('mouseup',endDraw); canvas.addEventListener('touchstart',startDraw,{passive:false}); canvas.addEventListener('touchmove',moveDraw,{passive:false}); canvas.addEventListener('touchend',endDraw); window.addEventListener('resize',()=>{if(sigModal.classList.contains('show')) resizeCanvas()});
+
+function pdfEscape(text){
+  return String(text??'').replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)');
+}
+function loadImg(src){
+  return new Promise(resolve=>{
+    if(!src) return resolve(null);
+    const img=new Image();
+    img.onload=()=>resolve(img);
+    img.onerror=()=>resolve(null);
+    img.src=src;
+  });
+}
+function drawFitText(ctx,text,x,y,maxW,size=8,bold=false,align='left'){
+  text=String(text??'');
+  ctx.font=(bold?'bold ':'')+size+'px Arial';
+  ctx.textAlign=align;
+  ctx.textBaseline='middle';
+  let shown=text;
+  while(ctx.measureText(shown).width>maxW && shown.length>1){ shown=shown.slice(0,-2)+'…'; }
+  ctx.fillText(shown,x,y);
+}
+function drawXLines(ctx,x,y,w,h){
+  ctx.beginPath();
+  ctx.moveTo(x+4,y+3); ctx.lineTo(x+w-4,y+h-3);
+  ctx.moveTo(x+w-4,y+3); ctx.lineTo(x+4,y+h-3);
+  ctx.stroke();
+}
+async function drawReportPageToCanvas(pi){
+  const scale=2;
+  const canvas=document.createElement('canvas');
+  canvas.width=612*scale; canvas.height=792*scale;
+  const ctx=canvas.getContext('2d');
+  ctx.scale(scale,scale);
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,612,792);
+  ctx.strokeStyle='#111'; ctx.fillStyle='#000'; ctx.lineWidth=1;
+
+  const p=data.pages[pi];
+  const x0=34, y0=42, w=544;
+  let y=y0;
+  const titleH=34, reportH=26, head1=28, head2=22, rowH=19.2;
+  const nameW=210, insW=52, dayW=35.3, totalW=w-nameW-insW-(dayW*7);
+  const colX=[x0, x0+nameW, x0+nameW+insW];
+  for(let i=0;i<7;i++) colX.push(x0+nameW+insW+dayW*(i+1));
+  colX.push(x0+w);
+
+  function rect(x,y,w,h){ctx.strokeRect(x,y,w,h);}
+  function line(x1,y1,x2,y2){ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();}
+
+  // Title
+  rect(x0,y,w,titleH);
+  drawFitText(ctx,'Structural Steel Painters of Greater New York, Local Union 806',x0+w/2,y+titleH/2,w-20,15,true,'center');
+  y+=titleH;
+
+  rect(x0,y,w,reportH);
+  drawFitText(ctx,"JOB STEWARD'S WEEKLY REPORT",x0+w/2,y+reportH/2,300,10,true,'center');
+  drawFitText(ctx,'Page '+p.page+' of '+p.total,x0+w-14,y+reportH/2,80,9,false,'right');
+  y+=reportH;
+
+  const tableTop=y;
+  // Header merged cells
+  rect(x0,y,nameW,head1+head2);
+  rect(x0+nameW,y,insW,head1+head2);
+  rect(x0+nameW+insW,y,dayW*7,head1);
+  rect(x0+nameW+insW+dayW*7,y,totalW,head1+head2);
+  drawFitText(ctx,'NAME OF MEMBERS',x0+nameW/2,y+(head1+head2)/2,130,7,true,'center');
+  drawFitText(ctx,'INS.\nNO.',x0+nameW+insW/2,y+(head1+head2)/2,36,7,true,'center');
+  drawFitText(ctx,'HOURS WORKED ONLY',x0+nameW+insW+(dayW*7)/2,y+head1/2,150,7,true,'center');
+  drawFitText(ctx,'TOTAL\nTIME',x0+w-totalW/2,y+(head1+head2)/2,34,7,true,'center');
+  for(let i=0;i<7;i++){
+    rect(x0+nameW+insW+dayW*i,y+head1,dayW,head2);
+    ctx.fillStyle='#2084b7';
+    drawFitText(ctx,days[i],x0+nameW+insW+dayW*i+dayW/2,y+head1+head2/2,dayW-2,5.8,true,'center');
+    ctx.fillStyle='#000';
+  }
+  y+=head1+head2;
+
+  const minRows=22;
+  for(let wi=0; wi<minRows; wi++){
+    const worker=p.workers[wi] || {};
+    rect(x0,y,nameW,rowH);
+    rect(x0+nameW,y,insW,rowH);
+    for(let i=0;i<7;i++) rect(x0+nameW+insW+dayW*i,y,dayW,rowH);
+    rect(x0+nameW+insW+dayW*7,y,totalW,rowH);
+
+    if(worker.role) drawFitText(ctx,worker.role,x0+3,y+3,nameW-8,4.5,false,'left');
+    drawFitText(ctx,worker.name||'',x0+7,y+rowH/2+2,nameW-14,8.5,false,'left');
+    drawFitText(ctx,worker.ins||'',x0+nameW+insW/2,y+rowH/2,insW-4,8,false,'center');
+
+    for(let i=0;i<7;i++){
+      const d=days[i], cx=x0+nameW+insW+dayW*i;
+      if(worker.crossed){ drawXLines(ctx,cx,y,dayW,rowH); }
+      else {
+        const val=worker[d]||'';
+        drawFitText(ctx,val,cx+dayW/2,y+rowH/2,dayW-4,8,false,'center');
+      }
+    }
+    if(worker && !worker.crossed) drawFitText(ctx,displayWorkerTotal(worker),x0+w-totalW/2,y+rowH/2,totalW-4,8.5,true,'center');
+    y+=rowH;
+  }
+
+  // Footer
+  const f1=25, fSig=38, fineH=16, logoH=20;
+  const lab1=88, val1=220, lab2=108, val2=w-lab1-val1-lab2;
+  function footerRow(h,label1,value1,label2,value2,value2Bold=false){
+    rect(x0,y,lab1,h); rect(x0+lab1,y,val1,h); rect(x0+lab1+val1,y,lab2,h); rect(x0+lab1+val1+lab2,y,val2,h);
+    drawFitText(ctx,label1,x0+4,y+h/2,lab1-8,6,false,'left');
+    drawFitText(ctx,value1,x0+lab1+6,y+h/2,val1-12,9,false,'left');
+    drawFitText(ctx,label2,x0+lab1+val1+4,y+h/2,lab2-8,6,false,'left');
+    drawFitText(ctx,value2,x0+lab1+val1+lab2+val2/2,y+h/2,val2-8,value2Bold?10:9,value2Bold,'center');
+    y+=h;
+  }
+  footerRow(f1,"Employer's Name:",data.employer,'Week Ending:',data.weekEnding?new Date(data.weekEnding+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'');
+  footerRow(f1,'Location of Job:',data.location,'Total Hours This Page:',fmt(pageTotal(p)),true);
+  footerRow(f1,'General Contractor:',data.generalContractor,'Contract Number:',data.contractNumber);
+
+  // Signature row
+  rect(x0,y,lab1,fSig); rect(x0+lab1,y,val1,fSig); rect(x0+lab1+val1,y,lab2,fSig); rect(x0+lab1+val1+lab2,y,val2,fSig);
+  drawFitText(ctx,'Signed',x0+4,y+11,lab1-8,6,false,'left');
+  drawFitText(ctx,'Signed',x0+lab1+val1+4,y+11,lab2-8,6,false,'left');
+  const sig1=await loadImg(p.signatures?.employerRep);
+  const sig2=await loadImg(p.signatures?.jobSteward);
+  if(sig1) ctx.drawImage(sig1,x0+lab1+8,y+4,val1-16,fSig-14);
+  if(sig2) ctx.drawImage(sig2,x0+lab1+val1+lab2+8,y+4,val2-16,fSig-14);
+  drawFitText(ctx,'Employer Rep.',x0+lab1+val1/2,y+fSig-5,70,5,false,'center');
+  drawFitText(ctx,'Job Steward',x0+lab1+val1+lab2+val2/2,y+fSig-5,70,5,false,'center');
+  y+=fSig;
+
+  rect(x0,y,w,fineH);
+  drawFitText(ctx,'Men are required to fill in the correct amount of hours worked each day.',x0+w/2,y+4,w-20,4.6,false,'center');
+  drawFitText(ctx,'Stewards will be held responsible for the correctness of this report.',x0+w/2,y+8.8,w-20,4.6,false,'center');
+  drawFitText(ctx,'Report all accidents to your Business Agent immediately.',x0+w/2,y+13.4,w-20,4.6,false,'center');
+  y+=fineH;
+
+  rect(x0,y,w,logoH);
+  const logo=await loadImg(logoSrc);
+  if(logo) ctx.drawImage(logo,x0+w/2-8,y+2,16,16);
+  return canvas;
+}
+function binaryFromDataUrl(dataUrl){
+  return atob(dataUrl.split(',')[1]);
+}
+function buildPdfFromJpegs(images){
+  let objects=[];
+  function add(str){objects.push(str); return objects.length;}
+  const pagesId=2;
+  let kids=[];
+  images.forEach((img,idx)=>{
+    const pageId=3+idx*3, imgId=pageId+1, contentId=pageId+2;
+    kids.push(pageId+' 0 R');
+    add('<< /Type /Page /Parent '+pagesId+' 0 R /MediaBox [0 0 612 792] /Resources << /XObject << /Im'+idx+' '+imgId+' 0 R >> >> /Contents '+contentId+' 0 R >>');
+    add('<< /Type /XObject /Subtype /Image /Width '+img.width+' /Height '+img.height+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+img.bin.length+' >>\nstream\n'+img.bin+'\nendstream');
+    const content='q 612 0 0 792 0 0 cm /Im'+idx+' Do Q';
+    add('<< /Length '+content.length+' >>\nstream\n'+content+'\nendstream');
+  });
+  objects.unshift('<< /Type /Pages /Kids ['+kids.join(' ')+'] /Count '+images.length+' >>');
+  objects.unshift('<< /Type /Catalog /Pages 2 0 R >>');
+
+  let pdf='%PDF-1.3\n';
+  let offsets=[0];
+  objects.forEach((obj,i)=>{
+    offsets.push(pdf.length);
+    pdf+=(i+1)+' 0 obj\n'+obj+'\nendobj\n';
+  });
+  const xref=pdf.length;
+  pdf+='xref\n0 '+(objects.length+1)+'\n0000000000 65535 f \n';
+  for(let i=1;i<offsets.length;i++) pdf+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';
+  pdf+='trailer\n<< /Size '+(objects.length+1)+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF';
+  const bytes=new Uint8Array(pdf.length);
+  for(let i=0;i<pdf.length;i++) bytes[i]=pdf.charCodeAt(i)&255;
+  return new Blob([bytes],{type:'application/pdf'});
+}
+async function printCleanReport(){
+  saveRaw();
+  try{
+    const images=[];
+    for(let i=0;i<data.pages.length;i++){
+      const canvas=await drawReportPageToCanvas(i);
+      images.push({bin:binaryFromDataUrl(canvas.toDataURL('image/jpeg',0.92)),width:canvas.width,height:canvas.height});
+    }
+    const blob=buildPdfFromJpegs(images);
+    const url=URL.createObjectURL(blob);
+    const fileName='Local-806-Steward-Report-'+(data.weekEnding||new Date().toISOString().slice(0,10))+'.pdf';
+    const a=document.createElement('a');
+    a.href=url; a.download=fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>{ window.open(url,'_blank'); },150);
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+  }catch(err){
+    alert('Could not create the clean PDF on this device: '+err.message);
+  }
+}
+
 render();
 </script>
 </body>

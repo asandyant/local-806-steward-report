@@ -2,15 +2,16 @@
 
 Static GitHub Pages app for the Local 806 Job Steward Weekly Report.
 
+Top buttons:
+- Print: creates a clean 3-page PDF inside the app with no phone/browser footer junk
+- Clear Week: clears hours, X marks, signatures, totals, and week ending, while keeping edited names and Ins. numbers
+
 Features:
 - 3 union-style pages
 - Sunday first
 - per-worker totals and per-page totals
 - direct tap-to-type hour boxes
 - press-and-hold on phone or double-click on PC to mark X
-- Clear Week button that keeps edited worker names/Ins. numbers
 - editable workers and Ins. numbers
 - mobile-friendly signature boxes
-- Download Clean PDF button that creates the PDF inside the app without browser URL/date footers
-- Print Backup with tighter 3-page print CSS
-- local Save plus Backup export/import
+- local autosave in browser storage

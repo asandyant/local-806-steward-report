@@ -38,6 +38,8 @@
   .hour-input{width:100%;height:100%;border:0;background:transparent;font-size:12px;font-family:Arial,Helvetica,sans-serif;text-align:center;padding:0;color:#000;outline:0;border-radius:0}
   .hour-input.mark-x{font-weight:900;letter-spacing:.4px}
   .total-cell{background:#f8fafc;text-align:center;font-size:12px;font-weight:800}
+  .total-btn{width:100%;height:100%;border:0;background:transparent;font-size:12px;font-weight:900;font-family:Arial,Helvetica,sans-serif;cursor:pointer;text-align:center;padding:0;color:#000}
+  .total-btn.manual-total{background:#fff7cc}
   .xcell{position:relative;height:100%;background:#fff}
   .xcell:before,.xcell:after{content:"";position:absolute;left:4px;right:4px;top:50%;border-top:1.3px solid #555;transform-origin:center}
   .xcell:before{transform:rotate(35deg)}.xcell:after{transform:rotate(-35deg)}
@@ -104,7 +106,7 @@
     .union-title{font-size:20px}
     .name-grid{grid-template-columns:1fr}
     .sig-box{border:0}
-    .hour-input{cursor:default;-webkit-appearance:none;appearance:none}
+    .hour-input,.total-btn{cursor:default;-webkit-appearance:none;appearance:none}
     .union-title{height:.42in;font-size:18px}.report-title{height:.30in}.data-row td{height:.265in}.foot-line{min-height:.25in}.sig-line{min-height:.42in}.sig-box{height:.28in}.fineprint{font-size:5.3px;line-height:1.05;padding:2px 0 1px}.footer-logo img{height:.22in}@page{size:letter portrait;margin:0}
   }
 </style>
@@ -194,18 +196,30 @@ function loadData(){
 }
 function saveRaw(){localStorage.setItem('local806StewardReportV6',JSON.stringify(data));}
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function num(v){if(v==null)return 0; if(typeof v==='string' && v.trim().toUpperCase()==='X') return 0; const n=parseFloat(String(v).trim()); return isNaN(n)?0:n}
+function num(v){
+  if(v==null) return 0;
+  let s=String(v).trim();
+  if(!s) return 0;
+  if(s.toUpperCase()==='X') return 0;
+  s=s.replace(/,/g,'.');
+  const matches=s.match(/-?\d+(?:\.\d+)?/g);
+  if(!matches) return 0;
+  // Allows entries like "8+1", "8 1", or "8.5" to total correctly.
+  return matches.reduce((sum,n)=>sum+Number(n),0);
+}
 function fmt(n){return n?(Math.round(n*10)/10).toFixed(1).replace(/\.0$/,''):''}
-function hasNumericHours(w){return days.some(d=>{const raw=w[d]; return raw!=='' && raw!=null && !isNaN(parseFloat(String(raw).trim()))})}
-function workerTotal(w){return w.crossed?0:days.reduce((t,d)=>t+num(w[d]),0)}
-function displayWorkerTotal(w){return hasNumericHours(w)?fmt(workerTotal(w)):''}
+function hasNumericHours(w){return days.some(d=>num(w[d])!==0 || (w[d]!=='' && w[d]!=null && String(w[d]).trim().toUpperCase()==='X'))}
+function totalAdjustment(w){return num(w.totalAdjustment)}
+function workerBaseTotal(w){return w.crossed?0:days.reduce((t,d)=>t+num(w[d]),0)}
+function workerTotal(w){return w.crossed?0:workerBaseTotal(w)+totalAdjustment(w)}
+function displayWorkerTotal(w){return (hasNumericHours(w)||totalAdjustment(w)!==0)?fmt(workerTotal(w)):''}
 function pageTotal(p){return p.workers.reduce((t,w)=>t+workerTotal(w),0)}
 function saveData(show){saveRaw();}
 function setTop(key,val){data[key]=val; saveRaw(); renderFootTotalsOnly();}
 function setPageWorker(pi,wi,key,val){if(!data.pages[pi]||!data.pages[pi].workers[wi]) return; data.pages[pi].workers[wi][key]=val; saveRaw(); renderFootTotalsOnly();}
 function renderFootTotalsOnly(){
   document.querySelectorAll('[data-page-total]').forEach(el=>{const pi=+el.dataset.pageTotal; el.textContent=fmt(pageTotal(data.pages[pi]));});
-  document.querySelectorAll('[data-worker-total]').forEach(el=>{const [pi,wi]=el.dataset.workerTotal.split('-').map(Number); const w=data.pages[pi]?.workers[wi]; el.textContent=w&& !w.crossed ? displayWorkerTotal(w) : '';});
+  document.querySelectorAll('[data-worker-total]').forEach(el=>{const [pi,wi]=el.dataset.workerTotal.split('-').map(Number); const w=data.pages[pi]?.workers[wi]; el.textContent=w&& !w.crossed ? displayWorkerTotal(w) : ''; el.classList.toggle('manual-total', !!(w&&w.totalAdjustment&&num(w.totalAdjustment)!==0));});
   document.querySelectorAll('[data-hour-display]').forEach(el=>{const [pi,wi,day]=el.dataset.hourDisplay.split('|'); const val=data.pages[+pi]?.workers[+wi]?.[day]||''; if(el.value!==val) el.value=val; el.classList.toggle('mark-x', String(val).trim().toUpperCase()==='X');});
 }
 function sigHtml(pi,type){const src=data.pages[pi].signatures?.[type]||''; return '<div class="sig-wrap"><div class="sig-box" onclick="openSignature('+pi+',\''+type+'\')">'+(src?'<img src="'+src+'" alt="signature">':'<span class="sig-placeholder">Tap/click to sign</span>')+'</div><div class="sig-caption">'+(type==='employerRep'?'Employer Rep.':'Job Steward')+'</div></div>';}
@@ -239,7 +253,7 @@ function render(){
           const value=esc(w[d]||'');
           return '<td><input class="hour-input '+((String(w[d]||'').trim().toUpperCase()==='X')?'mark-x':'')+'" data-hour-display="'+pi+'|'+wi+'|'+d+'" value="'+value+'" inputmode="decimal" oninput="setHourValue('+pi+','+wi+',\''+d+'\',this.value)" onpointerdown="startXHold(event,'+pi+','+wi+',\''+d+'\')" onpointerup="cancelXHold()" onpointercancel="cancelXHold()" onpointerleave="cancelXHold()" ondblclick="toggleX('+pi+','+wi+',\''+d+'\')" title="Tap to type hours. Press and hold or double-click to mark X." '+(real?'':'disabled')+'></td>';
         }).join('')+
-        '<td class="total-cell" data-worker-total="'+pi+'-'+wi+'">'+(w.crossed?'':displayWorkerTotal(w))+'</td>';
+        '<td class="total-cell"><button type="button" class="total-btn '+((w.totalAdjustment&&num(w.totalAdjustment)!==0)?'manual-total':'')+'" data-worker-total="'+pi+'-'+wi+'" onclick="editTotalAdjustment('+pi+','+wi+')" '+(real&&!w.crossed?'':'disabled')+' title="Tap to add or subtract from this worker total">'+(w.crossed?'':displayWorkerTotal(w))+'</button></td>';
       tbody.appendChild(tr);
     }
     app.appendChild(section);
@@ -251,6 +265,23 @@ function openWorkerEdit(pi,wi){const w=data.pages[pi].workers[wi]; document.getE
 function closeWorkerEdit(){workerModal.classList.remove('show'); workerModal.setAttribute('aria-hidden','true');}
 function saveWorkerEdit(){const pi=+document.getElementById('editPi').value, wi=+document.getElementById('editWi').value; const w=data.pages[pi].workers[wi]; w.name=document.getElementById('editName').value; w.ins=document.getElementById('editIns').value; w.role=document.getElementById('editRole').value; saveRaw(); closeWorkerEdit(); render();}
 function deleteWorkerEdit(){const pi=+document.getElementById('editPi').value, wi=+document.getElementById('editWi').value; const w=data.pages[pi].workers[wi]; if(w.crossed){alert('This crossed-out Wilson/Helen row stays because the union wants it shown on this page. You can edit the name or Ins. No., but it will stay crossed out.'); return;} if(confirm('Delete this worker from this page? The workers below will move up and blank lines will stay at the bottom.')){data.pages[pi].workers.splice(wi,1); saveRaw(); closeWorkerEdit(); render();}}
+function editTotalAdjustment(pi,wi){
+  const w=data.pages[pi].workers[wi];
+  if(!w || w.crossed) return;
+  const base=workerBaseTotal(w);
+  const current=totalAdjustment(w);
+  const currentText=current?fmt(current):'';
+  const answer=prompt('Base total from daily hours is '+fmt(base)+'.\nEnter extra hours to add/subtract from TOTAL TIME, example: 0.5 or -1.\nLeave blank to remove the adjustment.', currentText);
+  if(answer===null) return;
+  const cleaned=String(answer).trim();
+  if(cleaned===''){
+    delete w.totalAdjustment;
+  }else{
+    w.totalAdjustment=cleaned;
+  }
+  saveRaw();
+  renderFootTotalsOnly();
+}
 function setHourValue(pi,wi,day,val){let value=String(val??'').trim(); if(value.toUpperCase()==='X') value='X'; setPageWorker(pi,wi,day,value);}
 function startXHold(e,pi,wi,day){cancelXHold(); holdTimer=setTimeout(()=>{setHourValue(pi,wi,day,'X'); if(e.target){e.target.value='X'; e.target.classList.add('mark-x'); e.target.blur();}},650);}
 function cancelXHold(){if(holdTimer){clearTimeout(holdTimer); holdTimer=null;}}
@@ -262,6 +293,7 @@ function clearWeekData(){
     p.signatures={employerRep:'',jobSteward:''};
     p.workers.forEach(w=>{
       days.forEach(d=>{ delete w[d]; });
+      delete w.totalAdjustment;
     });
   });
   saveRaw();

@@ -12,6 +12,8 @@ Features:
 - per-worker totals and per-page totals
 - direct tap-to-type hour boxes
 - press-and-hold on phone or double-click on PC to mark X
+- tap a worker's TOTAL TIME box to add/subtract a manual total adjustment
+- stronger total math for every line
 - editable workers and Ins. numbers
 - mobile-friendly signature boxes
 - local autosave in browser storage

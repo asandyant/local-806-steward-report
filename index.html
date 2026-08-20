@@ -1,513 +1,58 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Local 806 Job Steward Weekly Report</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Temporarily Unavailable</title>
 <style>
-  :root{--ink:#111;--line:#111;--blue:#2084b7;--paper:#fff;--ui:#111827}
   *{box-sizing:border-box}
-  html,body{margin:0;background:#e6e7eb;color:var(--ink);font-family:Arial,Helvetica,sans-serif}
-  .toolbar{position:sticky;top:0;z-index:20;background:#111827;padding:10px 12px;box-shadow:0 2px 14px rgba(0,0,0,.25)}
-  .toolbar-inner{max-width:1100px;margin:0 auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .toolbar button{border:0;border-radius:8px;padding:10px 12px;font-size:14px;font-weight:900;cursor:pointer;background:#e5e7eb;color:#111827}
-  .toolbar button.primary{background:#38bdf8;color:#06283d}
-  .wrap{padding:22px 10px 44px}
-  .sheet{width:8.5in;min-height:11in;margin:0 auto 24px;background:var(--paper);padding:.50in .36in .23in;border:1px solid #999;box-shadow:0 10px 28px rgba(0,0,0,.16);page-break-after:always}
-  .sheet-inner{border:2px solid var(--line);background:#fff}
-  .union-title{height:.50in;display:flex;align-items:center;justify-content:center;text-align:center;font-size:20px;font-weight:900;letter-spacing:.05px;border-bottom:1px solid var(--line);white-space:nowrap;padding:0 10px}
-  .report-title{height:.36in;display:grid;grid-template-columns:1fr 1.3in;align-items:center;border-bottom:2px solid var(--line)}
-  .report-title .main{text-align:center;font-size:14px;font-weight:900;letter-spacing:.2px}
-  .page-no{text-align:center;font-size:12px}
-  table.report{width:100%;border-collapse:collapse;table-layout:fixed;border-bottom:1px solid var(--line)}
-  table.report th,table.report td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:0;vertical-align:middle}
-  table.report tr>*:last-child{border-right:0}
-  table.report thead th{height:.31in;text-align:center;font-weight:800;font-size:9.5px;background:#fff;text-transform:uppercase}
-  .name-col{width:2.55in}.ins-col{width:.72in}.day-col{width:.52in}.total-col{width:.70in}
-  .hours-title{font-size:9px;line-height:1}
-  .day-label{font-size:8.2px;color:var(--blue);text-transform:none;font-weight:700}
-  .data-row td{height:.304in}
-  .name-cell{position:relative;padding:0 3px!important}
-  .role-tag{position:absolute;left:4px;top:2px;font-size:5.7px;line-height:1;text-transform:uppercase;color:#4b5563;z-index:1}
-  .name-grid{display:grid;grid-template-columns:1fr 34px;align-items:center;gap:2px;width:100%;height:100%;padding-top:6px}
-  .name-input,.ins-input,.foot-input{width:100%;border:0;background:transparent;outline:0;font-family:Arial,Helvetica,sans-serif;color:#000;border-radius:0}
-  .name-input{font-size:12px;text-align:left;padding:0 2px 0 6px;height:18px;line-height:18px}
-  .ins-input{text-align:center;font-size:12px;height:100%}
-  .edit-btn{border:0;background:#e0f2fe;color:#075985;border-radius:4px;padding:2px 4px;font-size:9px;font-weight:800;cursor:pointer}
-  .edit-btn.blank{visibility:hidden}
-  .hour-input{width:100%;height:100%;border:0;background:transparent;font-size:12px;font-family:Arial,Helvetica,sans-serif;text-align:center;padding:0;color:#000;outline:0;border-radius:0}
-  .hour-input.mark-x{font-weight:900;letter-spacing:.4px}
-  .total-cell{background:#f8fafc;text-align:center;font-size:12px;font-weight:800}
-  .total-btn{width:100%;height:100%;border:0;background:transparent;font-size:12px;font-weight:900;font-family:Arial,Helvetica,sans-serif;cursor:pointer;text-align:center;padding:0;color:#000}
-  .total-btn.manual-total{background:#fff7cc}
-  .xcell{position:relative;height:100%;background:#fff}
-  .xcell:before,.xcell:after{content:"";position:absolute;left:4px;right:4px;top:50%;border-top:1.3px solid #555;transform-origin:center}
-  .xcell:before{transform:rotate(35deg)}.xcell:after{transform:rotate(-35deg)}
-  .footer{font-size:10px}
-  .foot-line{display:grid;grid-template-columns:1.35in 1fr 1.45in 1.75in;min-height:.31in;border-bottom:1px solid var(--line)}
-  .foot-line:last-child{border-bottom:0}
-  .foot-line>div{border-right:1px solid var(--line);display:flex;align-items:center;padding:3px 5px}
-  .foot-line>div:last-child{border-right:0}
-  .foot-label{font-size:9px;color:#333}
-  .foot-input{height:24px;font-size:13px;padding:0}
-  .page-total{background:#fffbe6;font-size:14px;font-weight:900;text-align:center;justify-content:center!important}
-  .sig-line{min-height:.54in}
-  .sig-box{width:100%;height:.38in;border:1px dashed #777;border-radius:3px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden}
-  .sig-box img{max-width:100%;max-height:100%}
-  .sig-placeholder{font-size:8px;color:#666}
-  .sig-caption{font-size:7px;text-align:center;color:#333;line-height:1.1}
-  .sig-wrap{width:100%}
-  .fineprint{font-size:6.2px;line-height:1.15;text-align:center;padding:3px 0 2px;color:#222}
-  .footer-logo{display:flex;justify-content:center;align-items:center;padding:1px 0 3px}
-  .footer-logo img{height:.34in;width:auto;filter:grayscale(100%) contrast(160%)}
-  .sheet-actions{display:flex;gap:8px;margin:8px 0 0;flex-wrap:wrap}
-  .sheet-actions button{border:0;border-radius:7px;background:#dbeafe;padding:8px 10px;font-weight:900;cursor:pointer}
-  .sheet-actions .small-hint{font-size:12px;color:#374151;align-self:center}
-  .modal{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:100;display:none;align-items:center;justify-content:center;padding:12px}
-  .modal.show{display:flex}
-  .modal-card{width:min(720px,96vw);background:#fff;border-radius:12px;padding:14px;box-shadow:0 14px 44px rgba(0,0,0,.35)}
-  .modal-card h2{margin:0 0 10px;font-size:18px}
-  .modal-card p{margin:0 0 10px;font-size:13px;color:#334155}
-  .modal-card label{display:grid;gap:4px;margin-bottom:8px;font-size:12px;font-weight:800}
-  .modal-card input{border:1px solid #cbd5e1;border-radius:8px;padding:9px;font-size:15px}
-  .modal-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-  .modal-actions button{border:0;border-radius:8px;padding:10px 12px;font-weight:900;cursor:pointer}
-  .modal-actions .save{background:#0f172a;color:#fff}
-  .modal-actions .clear{background:#fde68a}
-  .modal-actions .cancel{background:#e5e7eb}
-  .modal-actions .delete{background:#fecaca;color:#7f1d1d}
-  .modal-actions .xmark{background:#e0f2fe;color:#075985}
-  .canvas-wrap{border:2px solid #111;border-radius:8px;background:#fff;touch-action:none}
-  .sig-canvas{width:100%;height:240px;display:block;touch-action:none}
-  @media(max-width:900px){
-    .toolbar-inner{display:grid;grid-template-columns:1fr 1fr}
-    .toolbar button{width:100%}
-    .wrap{padding:10px 4px 30px}
-    .sheet{width:100%;min-height:auto;padding:.15in .08in}
-    .sheet-inner,.sheet-actions{min-width:7.55in}
-    .union-title{font-size:15px}
-    .report-title{grid-template-columns:1fr 1.05in}
-    .day-label{font-size:7.8px}
-    .sig-canvas{height:220px}
+  html,body{height:100%;margin:0}
+  body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#0f172a;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:24px;
   }
-  body.pdf-capture .toolbar,
-  body.pdf-capture .sheet-actions,
-  body.pdf-capture .edit-btn,
-  body.pdf-capture .sig-placeholder{display:none!important}
-  body.pdf-capture .sheet{box-shadow:none;border:0;margin:0 auto;background:#fff}
-  body.pdf-capture .sig-box{border:0}
-  body.pdf-capture input{-webkit-appearance:none;appearance:none}
-  @media print{
-    body{background:#fff}
-    .toolbar,.sheet-actions,.edit-btn,.modal,.sig-placeholder{display:none!important}
-    .wrap{padding:0}
-    .sheet{box-shadow:none;border:0;margin:0;padding:.22in .25in .10in;width:8.5in;height:11in;min-height:0;overflow:hidden;page-break-after:always;break-after:page}
-    .sheet-inner{min-width:0}
-    .union-title{font-size:20px}
-    .name-grid{grid-template-columns:1fr}
-    .sig-box{border:0}
-    .hour-input,.total-btn{cursor:default;-webkit-appearance:none;appearance:none}
-    .union-title{height:.42in;font-size:18px}.report-title{height:.30in}.data-row td{height:.265in}.foot-line{min-height:.25in}.sig-line{min-height:.42in}.sig-box{height:.28in}.fineprint{font-size:5.3px;line-height:1.05;padding:2px 0 1px}.footer-logo img{height:.22in}@page{size:letter portrait;margin:0}
+  .card{
+    width:min(720px,96vw);
+    border:4px solid #fff;
+    border-radius:24px;
+    padding:42px 26px;
+    background:linear-gradient(180deg,#111827,#020617);
+    box-shadow:0 22px 70px rgba(0,0,0,.45);
+  }
+  h1{
+    margin:0 0 18px;
+    font-size:clamp(34px,7vw,64px);
+    line-height:1.02;
+    font-weight:1000;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+  }
+  p{
+    margin:0;
+    font-size:clamp(18px,3.8vw,28px);
+    line-height:1.35;
+    font-weight:800;
+    color:#e5e7eb;
+  }
+  .small{
+    margin-top:26px;
+    font-size:clamp(14px,2.6vw,18px);
+    color:#94a3b8;
+    font-weight:700;
   }
 </style>
 </head>
 <body>
-<div class="toolbar">
-  <div class="toolbar-inner">
-    <button class="primary" onclick="printCleanReport()">Print</button>
-    <button onclick="clearWeekData()">Clear Week</button>
-  </div>
-</div>
-<main id="app" class="wrap"></main>
-
-<div id="sigModal" class="modal" aria-hidden="true"><div class="modal-card"><h2 id="sigTitle">Sign</h2><div class="canvas-wrap"><canvas id="sigCanvas" class="sig-canvas"></canvas></div><div class="modal-actions"><button class="save" onclick="saveSignature()">Save Signature</button><button class="clear" onclick="clearCanvas()">Clear</button><button class="delete" onclick="deleteSignature()">Delete Saved Signature</button><button class="cancel" onclick="closeSignature()">Cancel</button></div></div></div>
-<div id="workerModal" class="modal" aria-hidden="true"><div class="modal-card"><h2>Edit Worker</h2><input type="hidden" id="editPi"><input type="hidden" id="editWi"><label>Name<input id="editName" type="text"></label><label>Ins. No.<input id="editIns" type="text"></label><label>Role / note, optional<input id="editRole" type="text" placeholder="FOREMAN or SHOP STEWARD"></label><div class="modal-actions"><button class="save" onclick="saveWorkerEdit()">Save Worker</button><button class="delete" onclick="deleteWorkerEdit()">Delete Worker From This Page</button><button class="cancel" onclick="closeWorkerEdit()">Cancel</button></div></div></div>
-<script>
-const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-const logoSrc='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFwAAABcCAAAAADGhI2EAAAEGElEQVR4nK1Z25bsKgiksub/f7nOQ0S5qul9fOjpjlBWAAEdUG4HRETkXl4EN8KoHl4oHsFL4Ev8PfgO+QJ/B56gWa22A2jnGhzkRVqIvyM0zS8ICzB08DU4Nr/MqlgSJfxzxrZ4jGI039OomEOZFTqYeIFr5bzMHOZl38/FF3Ex44I0V4BbEZWvzWResBGL4FagjoHhR86PZfqIHsAtG4iQ9H6r1jJ/AroHH4mPQ5aYD9Y0MP4a4g26A59JFStUKCKIzlJBfby+OcEnqQhk7oralO6hpoMKHZWzKXjJUAy5DKyUfa4xiMwaBr1AzuIrfuCFYyjSeX88qmJlPTSxaT1swafBhytVt0T2MwMbac+B4cF4u/yO1Yha5pdjbhUow/097UCegiJzwUbbontoI2KMpfrHxNy4xES5RxUBAIZAQu2ixy2PIYV9PilILmgTMaZYgGPjbG2CVEMIMYGemGsI6b6sqvCRO50pEZi/tHjREqZ6BN3UPiIfLwscw68q9RyvbfInHHNqmj4YBYm4BzDjWVOz0jrsXJNnLfHUV6mZs39mGzAGwjuTtl7DfVYQEiICmk3EaTiXEisYKXyqEHZOwYuu49VJPdZuYATNGH9mQshkccnkGxorieq24RMC8d+GD/PYK2ZT5m7x5Vj1hoemaCzvxOF+FULdk7qF3o5Nu/EV3FJHmjnofmc+xk3W3IHD2wAu0G7Gs5ddwS/4bpcN89V1jF7wQ/04govIaKdf0vRUyxOvH905VHOf3b8e/sL2O+auXeDa2nSzv4DDdgGcHZV7mxP5pyMQCjUp0HR93Rz0zO2B7YUvitQevHUo/YdicUbO2aEsmPda5uzJ1Qr345fcsqqtjfVina/gK1ou2qev4BrjvMstxYFgqzEKMTkb11bpB5u/Z2oBJSaIKLe9Kapq8JshqeTdtUAcP9ZQaE+OXTg+p+NxswKmmGbkgkTDfIe+TidESAphfDNLOCGOjNmWjXx+SjiFUpjt9HdZcQt/I/roKl/Qz7xfkYZ5Z6xvJJ6CyrkfZPBsSmH57G+mNPEdh7b8tWWL7Xu4gIrQq0RFrbI/d83KGftNwXUi8oK2Pdmf1DFZC00rYjTi7Zxvffr0GITcdd6Ubi+KqYdSERG4O1H3S2/c1vomkmK6EL2H1BfdNieL8XrREjxGzMp+Te6AyiFM6Ih3XIbRAO2Iw/bvJYi3uXsLeuzZ6nphfy0bXO8darxiLImoFNFNx+cknkqhHWF3UZWakE0XxUMV0PDdLaVdRkMtbf+U31g9VXT7Jwvl3HJ7Zku9YlasEpfdV5TGnRutOcrmf23K9eXQUpbL1yeL5Eib8OoGqBrtP1vrMCmxW6N9+jdxt94v4Dfwe/VTIBy6xr3uRZT1Xc//AB5XuFWR/wDgm7K2PCSRHQAAAABJRU5ErkJggg==';
-const blankWorker=()=>({name:'',ins:''});
-const defaultData={
-  employer:'Jagd Construction',location:'Dyre Ave Bronx',generalContractor:'Judlaw Contracting',contractNumber:'C-35311',weekEnding:'',pages:[
-    {page:1,total:3,signatures:{employerRep:'',jobSteward:''},workers:[
-      {role:'FOREMAN',name:'Wilson Monteiro',ins:'11847'},
-      {role:'SHOP STEWARD',name:'Helen Betances',ins:'20835'},
-      {name:'Estefano Hornung',ins:'11612'},
-      {name:'Ruben Vasquez',ins:'11126'},
-      {name:'Jefferson Domaleski',ins:'20328'},
-      {name:'Joel Melgar',ins:'21139'},
-      {name:'Moacir Polet Jr',ins:'21050'},
-      {role:'1ST YR',name:'Felix Gonzalez',ins:'21336'},
-      {name:'Geanderson Campos',ins:'21167'},
-      {name:'Robert Young',ins:'DC21'},
-      {name:'Joao Hornung',ins:'21440'},
-      {name:'Henry Melara',ins:'21199'},
-      {name:'Juan Castellanos',ins:'21233'},
-      {name:'Yonis Cruz',ins:'DC51'},
-      {name:'Rivaldo Dos Santos',ins:'21060'},
-      {name:'Victoria Veloso',ins:'21449'},
-      {name:'Oscar Morge',ins:'DC51'},
-      {name:'Timothy Ladd',ins:'20588'},
-      {name:'Ismael Brandino',ins:'20864'}
-    ]},
-    {page:2,total:3,signatures:{employerRep:'',jobSteward:''},workers:[
-      {role:'FOREMAN',name:'Wilson Monteiro',ins:'11847',crossed:true},
-      {role:'SHOP STEWARD',name:'Helen Betances',ins:'20835',crossed:true},
-      {name:'Dicesar Miranda',ins:'11375'},
-      {name:'Rafael De Castro',ins:'21007'},
-      {name:'Fabiano Rodríguez',ins:'21078'},
-      {name:'Alex Miketen Miranda',ins:'21234'},
-      {name:'Deyvd De Oliveira',ins:'21194'},
-      {name:'Gustavo Pereira',ins:'20752'},
-      {role:'2ND YR',name:'Ramon Amparo',ins:'21170'},
-      {name:'Albin Cardona',ins:'DC51'},
-      {name:'Moises Sotta',ins:'DC51'},
-      {name:'Jared Arista',ins:'21416'},
-      {name:'Anderson Ceranto',ins:'11864'},
-      {name:'Jorge Santiago',ins:'11779'},
-      {name:'Marcos Dias',ins:'21031'},
-      {name:'Cliver Pereira',ins:'20817'},
-      {name:'Romel Guzhnay',ins:'21214'},
-      {name:'Elber Flores',ins:'DC21'},
-      {name:'Marcos Costa',ins:'DC21'}
-    ]},
-    {page:3,total:3,signatures:{employerRep:'',jobSteward:''},workers:[
-      {role:'FOREMAN',name:'Wilson Monteiro',ins:'11847',crossed:true},
-      {role:'SHOP STEWARD',name:'Helen Betances',ins:'20835',crossed:true},
-      {name:'Emerson E Haile',ins:'21235'},
-      {name:'Gabriel De Almeida',ins:'DC21'},
-      {name:'Raymond Roach',ins:'20431'},
-      {name:'Beau Forget',ins:'20553'},
-      {name:'Stephen Tillman',ins:'DC91'},
-      {name:'Antonio Sluzala',ins:'DC21'}
-    ]}
-  ]
-};
-const storageKeys=['local806StewardReportV6','local806StewardReportV5','local806StewardReportV4','local806StewardReportV3'];
-let data=loadData();
-let activeSig=null; const sigModal=document.getElementById('sigModal'); const canvas=document.getElementById('sigCanvas'); const ctx=canvas.getContext('2d'); let drawing=false,last=null;
-const workerModal=document.getElementById('workerModal'); let holdTimer=null;
-
-function deepCopy(obj){return JSON.parse(JSON.stringify(obj))}
-function loadData(){
-  for(const key of storageKeys){
-    try{const raw=localStorage.getItem(key); if(raw){return JSON.parse(raw)}}catch(e){}
-  }
-  return deepCopy(defaultData);
-}
-function saveRaw(){localStorage.setItem('local806StewardReportV6',JSON.stringify(data));}
-function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function num(v){
-  if(v==null) return 0;
-  let s=String(v).trim();
-  if(!s) return 0;
-  if(s.toUpperCase()==='X') return 0;
-  s=s.replace(/,/g,'.');
-  const matches=s.match(/-?\d+(?:\.\d+)?/g);
-  if(!matches) return 0;
-  // Allows entries like "8+1", "8 1", or "8.5" to total correctly.
-  return matches.reduce((sum,n)=>sum+Number(n),0);
-}
-function fmt(n){return n?(Math.round(n*10)/10).toFixed(1).replace(/\.0$/,''):''}
-function hasNumericHours(w){return days.some(d=>num(w[d])!==0 || (w[d]!=='' && w[d]!=null && String(w[d]).trim().toUpperCase()==='X'))}
-function totalAdjustment(w){return num(w.totalAdjustment)}
-function workerBaseTotal(w){return w.crossed?0:days.reduce((t,d)=>t+num(w[d]),0)}
-function workerTotal(w){return w.crossed?0:workerBaseTotal(w)+totalAdjustment(w)}
-function displayWorkerTotal(w){return (hasNumericHours(w)||totalAdjustment(w)!==0)?fmt(workerTotal(w)):''}
-function pageTotal(p){return p.workers.reduce((t,w)=>t+workerTotal(w),0)}
-function saveData(show){saveRaw();}
-function setTop(key,val){data[key]=val; saveRaw(); renderFootTotalsOnly();}
-function setPageWorker(pi,wi,key,val){if(!data.pages[pi]||!data.pages[pi].workers[wi]) return; data.pages[pi].workers[wi][key]=val; saveRaw(); renderFootTotalsOnly();}
-function renderFootTotalsOnly(){
-  document.querySelectorAll('[data-page-total]').forEach(el=>{const pi=+el.dataset.pageTotal; el.textContent=fmt(pageTotal(data.pages[pi]));});
-  document.querySelectorAll('[data-worker-total]').forEach(el=>{const [pi,wi]=el.dataset.workerTotal.split('-').map(Number); const w=data.pages[pi]?.workers[wi]; el.textContent=w&& !w.crossed ? displayWorkerTotal(w) : ''; el.classList.toggle('manual-total', !!(w&&w.totalAdjustment&&num(w.totalAdjustment)!==0));});
-  document.querySelectorAll('[data-hour-display]').forEach(el=>{const [pi,wi,day]=el.dataset.hourDisplay.split('|'); const val=data.pages[+pi]?.workers[+wi]?.[day]||''; if(el.value!==val) el.value=val; el.classList.toggle('mark-x', String(val).trim().toUpperCase()==='X');});
-}
-function sigHtml(pi,type){const src=data.pages[pi].signatures?.[type]||''; return '<div class="sig-wrap"><div class="sig-box" onclick="openSignature('+pi+',\''+type+'\')">'+(src?'<img src="'+src+'" alt="signature">':'<span class="sig-placeholder">Tap/click to sign</span>')+'</div><div class="sig-caption">'+(type==='employerRep'?'Employer Rep.':'Job Steward')+'</div></div>';}
-function render(){
-  const app=document.getElementById('app'); app.innerHTML='';
-  data.pages.forEach((p,pi)=>{
-    const section=document.createElement('section'); section.className='sheet';
-    section.innerHTML='<div class="sheet-inner">'+
-      '<div class="union-title">Structural Steel Painters of Greater New York, Local Union 806</div>'+
-      '<div class="report-title"><div class="main">JOB STEWARD\'S WEEKLY REPORT</div><div class="page-no">Page <u>'+p.page+'</u> of <u>'+p.total+'</u></div></div>'+
-      '<table class="report"><colgroup><col class="name-col"><col class="ins-col"><col class="day-col"><col class="day-col"><col class="day-col"><col class="day-col"><col class="day-col"><col class="day-col"><col class="day-col"><col class="total-col"></colgroup>'+
-      '<thead><tr><th rowspan="2">NAME OF MEMBERS</th><th rowspan="2">Ins.<br>No.</th><th colspan="7" class="hours-title">HOURS WORKED ONLY</th><th rowspan="2">TOTAL<br>TIME</th></tr><tr>'+days.map(d=>'<th><span class="day-label">'+d+'</span></th>').join('')+'</tr></thead><tbody></tbody></table>'+
-      '<div class="footer">'+
-      '<div class="foot-line"><div class="foot-label">Employer\'s Name:</div><div><input class="foot-input" value="'+esc(data.employer)+'" onchange="setTop(\'employer\',this.value)"></div><div class="foot-label">Week Ending:</div><div><input class="foot-input" type="date" value="'+esc(data.weekEnding)+'" onchange="setTop(\'weekEnding\',this.value)"></div></div>'+
-      '<div class="foot-line"><div class="foot-label">Location of Job:</div><div><input class="foot-input" value="'+esc(data.location)+'" onchange="setTop(\'location\',this.value)"></div><div class="foot-label">Total Hours This Page:</div><div class="page-total" data-page-total="'+pi+'">'+fmt(pageTotal(p))+'</div></div>'+
-      '<div class="foot-line"><div class="foot-label">General Contractor:</div><div><input class="foot-input" value="'+esc(data.generalContractor)+'" onchange="setTop(\'generalContractor\',this.value)"></div><div class="foot-label">Contract Number:</div><div><input class="foot-input" value="'+esc(data.contractNumber)+'" onchange="setTop(\'contractNumber\',this.value)"></div></div>'+
-      '<div class="foot-line sig-line"><div class="foot-label">Signed</div><div>'+sigHtml(pi,'employerRep')+'</div><div class="foot-label">Signed</div><div>'+sigHtml(pi,'jobSteward')+'</div></div>'+
-      '<div class="fineprint">Men are required to fill in the correct amount of hours worked each day.<br>Stewards will be held responsible for the correctness of this report.<br>Report all accidents to your Business Agent immediately.</div>'+
-      '<div class="footer-logo"><img src="'+logoSrc+'" alt="Local 806 logo"></div>'+
-      '</div></div>'+
-      '<div class="sheet-actions"><button onclick="addWorker('+pi+')">+ Add worker to page '+p.page+'</button><span class="small-hint">Tap a day box to enter hours or mark an X.</span></div>';
-    const tbody=section.querySelector('tbody');
-    const minRows=22;
-    for(let wi=0; wi<Math.max(minRows,p.workers.length); wi++){
-      const w=p.workers[wi]||blankWorker(); const real=!!p.workers[wi];
-      const tr=document.createElement('tr'); tr.className='data-row';
-      tr.innerHTML='<td class="name-cell">'+(w.role?'<span class="role-tag">'+esc(w.role)+'</span>':'')+'<div class="name-grid"><input class="name-input" value="'+esc(w.name)+'" onchange="setPageWorker('+pi+','+wi+',\'name\',this.value)" '+(real?'':'disabled')+'>'+(real?'<button class="edit-btn" onclick="openWorkerEdit('+pi+','+wi+')">Edit</button>':'<button class="edit-btn blank">Edit</button>')+'</div></td>'+
-        '<td><input class="ins-input" value="'+esc(w.ins)+'" onchange="setPageWorker('+pi+','+wi+',\'ins\',this.value)" '+(real?'':'disabled')+'></td>'+
-        days.map(d=>{
-          if(w.crossed) return '<td><div class="xcell"></div></td>';
-          const value=esc(w[d]||'');
-          return '<td><input class="hour-input '+((String(w[d]||'').trim().toUpperCase()==='X')?'mark-x':'')+'" data-hour-display="'+pi+'|'+wi+'|'+d+'" value="'+value+'" inputmode="decimal" oninput="setHourValue('+pi+','+wi+',\''+d+'\',this.value)" onpointerdown="startXHold(event,'+pi+','+wi+',\''+d+'\')" onpointerup="cancelXHold()" onpointercancel="cancelXHold()" onpointerleave="cancelXHold()" ondblclick="toggleX('+pi+','+wi+',\''+d+'\')" title="Tap to type hours. Press and hold or double-click to mark X." '+(real?'':'disabled')+'></td>';
-        }).join('')+
-        '<td class="total-cell"><button type="button" class="total-btn '+((w.totalAdjustment&&num(w.totalAdjustment)!==0)?'manual-total':'')+'" data-worker-total="'+pi+'-'+wi+'" onclick="editTotalAdjustment('+pi+','+wi+')" '+(real&&!w.crossed?'':'disabled')+' title="Tap to add or subtract from this worker total">'+(w.crossed?'':displayWorkerTotal(w))+'</button></td>';
-      tbody.appendChild(tr);
-    }
-    app.appendChild(section);
-  });
-}
-function addWorker(pi){data.pages[pi].workers.push(blankWorker()); saveRaw(); 
-render(); setTimeout(()=>{const inputs=document.querySelectorAll('.sheet')[pi].querySelectorAll('.name-input'); inputs[inputs.length-1]?.focus();},50)}
-function openWorkerEdit(pi,wi){const w=data.pages[pi].workers[wi]; document.getElementById('editPi').value=pi; document.getElementById('editWi').value=wi; document.getElementById('editName').value=w.name||''; document.getElementById('editIns').value=w.ins||''; document.getElementById('editRole').value=w.role||''; workerModal.classList.add('show'); workerModal.setAttribute('aria-hidden','false');}
-function closeWorkerEdit(){workerModal.classList.remove('show'); workerModal.setAttribute('aria-hidden','true');}
-function saveWorkerEdit(){const pi=+document.getElementById('editPi').value, wi=+document.getElementById('editWi').value; const w=data.pages[pi].workers[wi]; w.name=document.getElementById('editName').value; w.ins=document.getElementById('editIns').value; w.role=document.getElementById('editRole').value; saveRaw(); closeWorkerEdit(); render();}
-function deleteWorkerEdit(){const pi=+document.getElementById('editPi').value, wi=+document.getElementById('editWi').value; const w=data.pages[pi].workers[wi]; if(w.crossed){alert('This crossed-out Wilson/Helen row stays because the union wants it shown on this page. You can edit the name or Ins. No., but it will stay crossed out.'); return;} if(confirm('Delete this worker from this page? The workers below will move up and blank lines will stay at the bottom.')){data.pages[pi].workers.splice(wi,1); saveRaw(); closeWorkerEdit(); render();}}
-function editTotalAdjustment(pi,wi){
-  const w=data.pages[pi].workers[wi];
-  if(!w || w.crossed) return;
-  const base=workerBaseTotal(w);
-  const current=totalAdjustment(w);
-  const currentText=current?fmt(current):'';
-  const answer=prompt('Base total from daily hours is '+fmt(base)+'.\nEnter extra hours to add/subtract from TOTAL TIME, example: 0.5 or -1.\nLeave blank to remove the adjustment.', currentText);
-  if(answer===null) return;
-  const cleaned=String(answer).trim();
-  if(cleaned===''){
-    delete w.totalAdjustment;
-  }else{
-    w.totalAdjustment=cleaned;
-  }
-  saveRaw();
-  renderFootTotalsOnly();
-}
-function setHourValue(pi,wi,day,val){let value=String(val??'').trim(); if(value.toUpperCase()==='X') value='X'; setPageWorker(pi,wi,day,value);}
-function startXHold(e,pi,wi,day){cancelXHold(); holdTimer=setTimeout(()=>{setHourValue(pi,wi,day,'X'); if(e.target){e.target.value='X'; e.target.classList.add('mark-x'); e.target.blur();}},650);}
-function cancelXHold(){if(holdTimer){clearTimeout(holdTimer); holdTimer=null;}}
-function toggleX(pi,wi,day){const w=data.pages[pi].workers[wi]; const cur=String(w[day]||'').trim().toUpperCase(); setHourValue(pi,wi,day,cur==='X'?'':'X'); renderFootTotalsOnly();}
-function clearWeekData(){
-  if(!confirm('Clear this week? This removes hours, X marks, signatures, and week ending date, but keeps the current worker names and Ins. numbers exactly as edited.')) return;
-  data.weekEnding='';
-  data.pages.forEach(p=>{
-    p.signatures={employerRep:'',jobSteward:''};
-    p.workers.forEach(w=>{
-      days.forEach(d=>{ delete w[d]; });
-      delete w.totalAdjustment;
-    });
-  });
-  saveRaw();
-  render();
-}
-function downloadBackup(){saveRaw(); const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='local-806-steward-report-backup.json'; a.click(); URL.revokeObjectURL(a.href);}
-function importBackup(e){const file=e.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=()=>{try{data=JSON.parse(r.result); saveRaw(); render(); alert('Backup imported.');}catch(err){alert('Could not import this backup.')}}; r.readAsText(file); e.target.value='';}
-function resizeCanvas(){const ratio=window.devicePixelRatio||1; const rect=canvas.getBoundingClientRect(); canvas.width=rect.width*ratio; canvas.height=rect.height*ratio; ctx.setTransform(ratio,0,0,ratio,0,0); ctx.lineWidth=3; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle='#111'; ctx.fillStyle='#fff'; ctx.fillRect(0,0,rect.width,rect.height)}
-function pos(e){const r=canvas.getBoundingClientRect(); const p=e.touches?e.touches[0]:e; return {x:p.clientX-r.left,y:p.clientY-r.top};}
-function startDraw(e){e.preventDefault(); drawing=true; last=pos(e)}
-function moveDraw(e){if(!drawing) return; e.preventDefault(); const p=pos(e); ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last=p;}
-function endDraw(){drawing=false; last=null;}
-function clearCanvas(){const r=canvas.getBoundingClientRect(); ctx.fillStyle='#fff'; ctx.fillRect(0,0,r.width,r.height)}
-function openSignature(pi,type){activeSig={pi,type}; document.getElementById('sigTitle').textContent=(type==='employerRep'?'Employer Rep. Signature':'Job Steward Signature')+' - Page '+data.pages[pi].page; sigModal.classList.add('show'); sigModal.setAttribute('aria-hidden','false'); setTimeout(()=>{resizeCanvas(); const src=data.pages[pi].signatures?.[type]; if(src){const img=new Image(); img.onload=()=>{clearCanvas(); ctx.drawImage(img,0,0,canvas.getBoundingClientRect().width,canvas.getBoundingClientRect().height)}; img.src=src;}},40)}
-function closeSignature(){sigModal.classList.remove('show'); sigModal.setAttribute('aria-hidden','true'); activeSig=null;}
-function saveSignature(){if(!activeSig) return; data.pages[activeSig.pi].signatures=data.pages[activeSig.pi].signatures||{}; data.pages[activeSig.pi].signatures[activeSig.type]=canvas.toDataURL('image/png'); saveRaw(); closeSignature(); render();}
-function deleteSignature(){if(!activeSig) return; if(confirm('Delete this saved signature?')){data.pages[activeSig.pi].signatures[activeSig.type]=''; saveRaw(); closeSignature(); render();}}
-canvas.addEventListener('mousedown',startDraw); canvas.addEventListener('mousemove',moveDraw); window.addEventListener('mouseup',endDraw); canvas.addEventListener('touchstart',startDraw,{passive:false}); canvas.addEventListener('touchmove',moveDraw,{passive:false}); canvas.addEventListener('touchend',endDraw); window.addEventListener('resize',()=>{if(sigModal.classList.contains('show')) resizeCanvas()});
-
-function pdfEscape(text){
-  return String(text??'').replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)');
-}
-function loadImg(src){
-  return new Promise(resolve=>{
-    if(!src) return resolve(null);
-    const img=new Image();
-    img.onload=()=>resolve(img);
-    img.onerror=()=>resolve(null);
-    img.src=src;
-  });
-}
-function drawFitText(ctx,text,x,y,maxW,size=8,bold=false,align='left'){
-  text=String(text??'');
-  ctx.font=(bold?'bold ':'')+size+'px Arial';
-  ctx.textAlign=align;
-  ctx.textBaseline='middle';
-  let shown=text;
-  while(ctx.measureText(shown).width>maxW && shown.length>1){ shown=shown.slice(0,-2)+'…'; }
-  ctx.fillText(shown,x,y);
-}
-function drawXLines(ctx,x,y,w,h){
-  ctx.beginPath();
-  ctx.moveTo(x+4,y+3); ctx.lineTo(x+w-4,y+h-3);
-  ctx.moveTo(x+w-4,y+3); ctx.lineTo(x+4,y+h-3);
-  ctx.stroke();
-}
-async function drawReportPageToCanvas(pi){
-  const scale=2;
-  const canvas=document.createElement('canvas');
-  canvas.width=612*scale; canvas.height=792*scale;
-  const ctx=canvas.getContext('2d');
-  ctx.scale(scale,scale);
-  ctx.fillStyle='#fff'; ctx.fillRect(0,0,612,792);
-  ctx.strokeStyle='#111'; ctx.fillStyle='#000'; ctx.lineWidth=1;
-
-  const p=data.pages[pi];
-  const x0=34, y0=42, w=544;
-  let y=y0;
-  const titleH=34, reportH=26, head1=28, head2=22, rowH=19.2;
-  const nameW=210, insW=52, dayW=35.3, totalW=w-nameW-insW-(dayW*7);
-  const colX=[x0, x0+nameW, x0+nameW+insW];
-  for(let i=0;i<7;i++) colX.push(x0+nameW+insW+dayW*(i+1));
-  colX.push(x0+w);
-
-  function rect(x,y,w,h){ctx.strokeRect(x,y,w,h);}
-  function line(x1,y1,x2,y2){ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();}
-
-  // Title
-  rect(x0,y,w,titleH);
-  drawFitText(ctx,'Structural Steel Painters of Greater New York, Local Union 806',x0+w/2,y+titleH/2,w-20,15,true,'center');
-  y+=titleH;
-
-  rect(x0,y,w,reportH);
-  drawFitText(ctx,"JOB STEWARD'S WEEKLY REPORT",x0+w/2,y+reportH/2,300,10,true,'center');
-  drawFitText(ctx,'Page '+p.page+' of '+p.total,x0+w-14,y+reportH/2,80,9,false,'right');
-  y+=reportH;
-
-  const tableTop=y;
-  // Header merged cells
-  rect(x0,y,nameW,head1+head2);
-  rect(x0+nameW,y,insW,head1+head2);
-  rect(x0+nameW+insW,y,dayW*7,head1);
-  rect(x0+nameW+insW+dayW*7,y,totalW,head1+head2);
-  drawFitText(ctx,'NAME OF MEMBERS',x0+nameW/2,y+(head1+head2)/2,130,7,true,'center');
-  drawFitText(ctx,'INS.\nNO.',x0+nameW+insW/2,y+(head1+head2)/2,36,7,true,'center');
-  drawFitText(ctx,'HOURS WORKED ONLY',x0+nameW+insW+(dayW*7)/2,y+head1/2,150,7,true,'center');
-  drawFitText(ctx,'TOTAL\nTIME',x0+w-totalW/2,y+(head1+head2)/2,34,7,true,'center');
-  for(let i=0;i<7;i++){
-    rect(x0+nameW+insW+dayW*i,y+head1,dayW,head2);
-    ctx.fillStyle='#2084b7';
-    drawFitText(ctx,days[i],x0+nameW+insW+dayW*i+dayW/2,y+head1+head2/2,dayW-2,5.8,true,'center');
-    ctx.fillStyle='#000';
-  }
-  y+=head1+head2;
-
-  const minRows=22;
-  for(let wi=0; wi<minRows; wi++){
-    const worker=p.workers[wi] || {};
-    rect(x0,y,nameW,rowH);
-    rect(x0+nameW,y,insW,rowH);
-    for(let i=0;i<7;i++) rect(x0+nameW+insW+dayW*i,y,dayW,rowH);
-    rect(x0+nameW+insW+dayW*7,y,totalW,rowH);
-
-    if(worker.role) drawFitText(ctx,worker.role,x0+3,y+3,nameW-8,4.5,false,'left');
-    drawFitText(ctx,worker.name||'',x0+7,y+rowH/2+2,nameW-14,8.5,false,'left');
-    drawFitText(ctx,worker.ins||'',x0+nameW+insW/2,y+rowH/2,insW-4,8,false,'center');
-
-    for(let i=0;i<7;i++){
-      const d=days[i], cx=x0+nameW+insW+dayW*i;
-      if(worker.crossed){ drawXLines(ctx,cx,y,dayW,rowH); }
-      else {
-        const val=worker[d]||'';
-        drawFitText(ctx,val,cx+dayW/2,y+rowH/2,dayW-4,8,false,'center');
-      }
-    }
-    if(worker && !worker.crossed) drawFitText(ctx,displayWorkerTotal(worker),x0+w-totalW/2,y+rowH/2,totalW-4,8.5,true,'center');
-    y+=rowH;
-  }
-
-  // Footer
-  const f1=25, fSig=38, fineH=16, logoH=20;
-  const lab1=88, val1=220, lab2=108, val2=w-lab1-val1-lab2;
-  function footerRow(h,label1,value1,label2,value2,value2Bold=false){
-    rect(x0,y,lab1,h); rect(x0+lab1,y,val1,h); rect(x0+lab1+val1,y,lab2,h); rect(x0+lab1+val1+lab2,y,val2,h);
-    drawFitText(ctx,label1,x0+4,y+h/2,lab1-8,6,false,'left');
-    drawFitText(ctx,value1,x0+lab1+6,y+h/2,val1-12,9,false,'left');
-    drawFitText(ctx,label2,x0+lab1+val1+4,y+h/2,lab2-8,6,false,'left');
-    drawFitText(ctx,value2,x0+lab1+val1+lab2+val2/2,y+h/2,val2-8,value2Bold?10:9,value2Bold,'center');
-    y+=h;
-  }
-  footerRow(f1,"Employer's Name:",data.employer,'Week Ending:',data.weekEnding?new Date(data.weekEnding+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'');
-  footerRow(f1,'Location of Job:',data.location,'Total Hours This Page:',fmt(pageTotal(p)),true);
-  footerRow(f1,'General Contractor:',data.generalContractor,'Contract Number:',data.contractNumber);
-
-  // Signature row
-  rect(x0,y,lab1,fSig); rect(x0+lab1,y,val1,fSig); rect(x0+lab1+val1,y,lab2,fSig); rect(x0+lab1+val1+lab2,y,val2,fSig);
-  drawFitText(ctx,'Signed',x0+4,y+11,lab1-8,6,false,'left');
-  drawFitText(ctx,'Signed',x0+lab1+val1+4,y+11,lab2-8,6,false,'left');
-  const sig1=await loadImg(p.signatures?.employerRep);
-  const sig2=await loadImg(p.signatures?.jobSteward);
-  if(sig1) ctx.drawImage(sig1,x0+lab1+8,y+4,val1-16,fSig-14);
-  if(sig2) ctx.drawImage(sig2,x0+lab1+val1+lab2+8,y+4,val2-16,fSig-14);
-  drawFitText(ctx,'Employer Rep.',x0+lab1+val1/2,y+fSig-5,70,5,false,'center');
-  drawFitText(ctx,'Job Steward',x0+lab1+val1+lab2+val2/2,y+fSig-5,70,5,false,'center');
-  y+=fSig;
-
-  rect(x0,y,w,fineH);
-  drawFitText(ctx,'Men are required to fill in the correct amount of hours worked each day.',x0+w/2,y+4,w-20,4.6,false,'center');
-  drawFitText(ctx,'Stewards will be held responsible for the correctness of this report.',x0+w/2,y+8.8,w-20,4.6,false,'center');
-  drawFitText(ctx,'Report all accidents to your Business Agent immediately.',x0+w/2,y+13.4,w-20,4.6,false,'center');
-  y+=fineH;
-
-  rect(x0,y,w,logoH);
-  const logo=await loadImg(logoSrc);
-  if(logo) ctx.drawImage(logo,x0+w/2-8,y+2,16,16);
-  return canvas;
-}
-function binaryFromDataUrl(dataUrl){
-  return atob(dataUrl.split(',')[1]);
-}
-function buildPdfFromJpegs(images){
-  let objects=[];
-  function add(str){objects.push(str); return objects.length;}
-  const pagesId=2;
-  let kids=[];
-  images.forEach((img,idx)=>{
-    const pageId=3+idx*3, imgId=pageId+1, contentId=pageId+2;
-    kids.push(pageId+' 0 R');
-    add('<< /Type /Page /Parent '+pagesId+' 0 R /MediaBox [0 0 612 792] /Resources << /XObject << /Im'+idx+' '+imgId+' 0 R >> >> /Contents '+contentId+' 0 R >>');
-    add('<< /Type /XObject /Subtype /Image /Width '+img.width+' /Height '+img.height+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+img.bin.length+' >>\nstream\n'+img.bin+'\nendstream');
-    const content='q 612 0 0 792 0 0 cm /Im'+idx+' Do Q';
-    add('<< /Length '+content.length+' >>\nstream\n'+content+'\nendstream');
-  });
-  objects.unshift('<< /Type /Pages /Kids ['+kids.join(' ')+'] /Count '+images.length+' >>');
-  objects.unshift('<< /Type /Catalog /Pages 2 0 R >>');
-
-  let pdf='%PDF-1.3\n';
-  let offsets=[0];
-  objects.forEach((obj,i)=>{
-    offsets.push(pdf.length);
-    pdf+=(i+1)+' 0 obj\n'+obj+'\nendobj\n';
-  });
-  const xref=pdf.length;
-  pdf+='xref\n0 '+(objects.length+1)+'\n0000000000 65535 f \n';
-  for(let i=1;i<offsets.length;i++) pdf+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';
-  pdf+='trailer\n<< /Size '+(objects.length+1)+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF';
-  const bytes=new Uint8Array(pdf.length);
-  for(let i=0;i<pdf.length;i++) bytes[i]=pdf.charCodeAt(i)&255;
-  return new Blob([bytes],{type:'application/pdf'});
-}
-async function printCleanReport(){
-  saveRaw();
-  try{
-    const images=[];
-    for(let i=0;i<data.pages.length;i++){
-      const canvas=await drawReportPageToCanvas(i);
-      images.push({bin:binaryFromDataUrl(canvas.toDataURL('image/jpeg',0.92)),width:canvas.width,height:canvas.height});
-    }
-    const blob=buildPdfFromJpegs(images);
-    const url=URL.createObjectURL(blob);
-    const fileName='Local-806-Steward-Report-'+(data.weekEnding||new Date().toISOString().slice(0,10))+'.pdf';
-    const a=document.createElement('a');
-    a.href=url; a.download=fileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(()=>{ window.open(url,'_blank'); },150);
-    setTimeout(()=>URL.revokeObjectURL(url),60000);
-  }catch(err){
-    alert('Could not create the clean PDF on this device: '+err.message);
-  }
-}
-
-render();
-</script>
+  <main class="card">
+    <h1>Profile Temporarily Unavailable</h1>
+    <p>This profile is temporarily unavailable due to maintenance.</p>
+    <div class="small">Please check back later.</div>
+  </main>
 </body>
 </html>
